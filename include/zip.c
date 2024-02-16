@@ -232,36 +232,7 @@ static char *zip_strrpl(const char *str, size_t n, char oldchar, char newchar) {
 }
 
 static char *zip_name_normalize(char *name, char *const nname, size_t len) {
-  size_t offn = 0;
-  size_t offnn = 0, ncpy = 0;
-
-  if (name == NULL || nname == NULL || len <= 0) {
-    return NULL;
-  }
-  // skip trailing '/'
-  while (ISSLASH(*name))
-    name++;
-
-  for (; offn < len; offn++) {
-    if (ISSLASH(name[offn])) {
-      if (ncpy > 0 && strcmp(&nname[offnn], ".\0") &&
-          strcmp(&nname[offnn], "..\0")) {
-        offnn += ncpy;
-        nname[offnn++] = name[offn]; // append '/'
-      }
-      ncpy = 0;
-    } else {
-      nname[offnn + ncpy] = name[offn];
-      ncpy++;
-    }
-  }
-
-  // at the end, extra check what we've already copied
-  if (ncpy == 0 || !strcmp(&nname[offnn], ".\0") ||
-      !strcmp(&nname[offnn], "..\0")) {
-    nname[offnn] = 0;
-  }
-  return nname;
+  return name;
 }
 
 static mz_bool zip_name_match(const char *name1, const char *name2) {
@@ -327,11 +298,10 @@ static int zip_archive_extract(mz_zip_archive *zip_archive, const char *dir,
 
   if (!ISSLASH(path[dirlen - 1])) {
 #if defined(_WIN32) || defined(__WIN32__)
-    path[dirlen] = '\\';
+    path[dirlen] = '\\'; path[++dirlen] = '\0';
 #else
-    path[dirlen] = '/';
+    path[dirlen] = '/'; path[++dirlen] = '\0';
 #endif
-    ++dirlen;
   }
 
   if (filename_size > MZ_ZIP_MAX_ARCHIVE_FILENAME_SIZE - dirlen) {

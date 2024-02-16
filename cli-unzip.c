@@ -20,8 +20,7 @@ int main(int argc,char **argv) {
   for (int i=1;i<argc;++i) {
     if (argv[i][0] == '-' && argv[i][1] == 'd') {
       if (argv[i][2] != '\0') {
-        outdirectory = malloc(sizeof(char)*strlen(argv[i]+1));
-        strcpy(outdirectory,argv[i]+2);
+        outdirectory = strdup(argv[i]+2);
       }
       else if (++i == argc) {
         print_usage(argv[0]);
@@ -29,8 +28,7 @@ int main(int argc,char **argv) {
         return 1;
       }
       else {
-        outdirectory = malloc(sizeof(char)*(strlen(argv[i])+1));
-        strcpy(outdirectory,argv[i]);
+        outdirectory = strdup(argv[i]);
       }
     }
     else ++infilecount;
